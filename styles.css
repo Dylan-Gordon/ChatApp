@@ -1,0 +1,132 @@
+html {
+  background-color: #2b2b2b;
+  width: 100%;
+}
+
+html,
+body {
+  height: 100%;
+  max-height: 100%;
+}
+
+body {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #494949;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  order: 1;
+  max-height: 15%;
+  height: 15%;
+}
+
+#mainBody {
+  order: 2;
+  height: 80%;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 2;
+  align-items: stretch;
+}
+
+.message-chat {
+  order: 1;
+  height: 100%;
+  max-height: 100%;
+  width: 70%;
+  display: inline-block;
+}
+
+.scrollableArea {
+  height: 100%;
+  max-height: 100%;
+}
+
+#messages {
+  overflow-y: scroll;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  list-style-type: none;
+}
+
+ul > :last-child {
+  margin-top: auto;
+}
+
+#userList {
+  order: 2;
+  height: 100%;
+  width: 30%;
+}
+
+#submitForm {
+  order: 3;
+}
+
+form {
+  background: #000;
+  padding: 3px;
+  border: 10;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  width: 100%;
+  height: 5%;
+}
+form input {
+  border: 20px;
+  padding: 10px;
+  width: 90%;
+  margin-right: 0.5%;
+}
+form button {
+  width: 9%;
+  background: rgb(130, 224, 255);
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.user-messages {
+  background-color: #232323;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.personal-messages {
+  background-color: #333333;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.server-messages {
+  background-color: #757262;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+#userList {
+  color: azure;
+  background-color: #3d3d3d;
+  text-align: center;
+}
+
+#activeUserList {
+  list-style: none;
+  align-items: center;
+}
+
+#userList li {
+  background-color: #4d4d4d;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 20px;
+  text-align: center;
+}

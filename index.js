@@ -1,23 +1,73 @@
+const { request } = require('http');
+
 var app = require('express')();
+var cookieParser = require('cookie-parser');
+var bodyParser = require("body-parser");
+const { nextTick } = require('process');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+
+app.use(cookieParser());
+app.use(bodyParser.json());
 
 let userCounter = 0;
 let messageLog = [];
 let users = { 'userList': [] };
 let socketDictionary = new Object();
+let latestUserConnection = null;
 
 app.get('/', (req, res) =>
 {
-   res.sendFile(__dirname + '/index.html');
+   if (req.query.user)
+   {
+
+   }
+   else
+   {
+      if (req.cookies['user'])
+      {
+         latestUserConnection = req.cookies['user'];
+         res.sendFile(__dirname + '/index.html');
+      }
+      else
+      {
+         latestUserConnection = null;
+         res.sendFile(__dirname + '/index.html');
+      }
+   }
+});
+app.post('/user', (req, res, next) =>
+{
+   if (!req.body)
+   {
+      return;
+   }
+   res.clearCookie('user');
+   // res.cookie('user', req.body.user, { maxAge: 60 * 60 * 1000 });
+
+   next();
+
+});
+app.get('/styles.css', function (req, res)
+{
+   res.sendFile(__dirname + "/" + "styles.css");
+});
+app.get('/script.js', function (req, res)
+{
+   res.sendFile(__dirname + "/" + "script.js");
 });
 
 io.on('connection', (socket) =>
 {
    socket.emit('server command', "clear");
    let socketObject = {};
-   socketObject["username"] = changeUsername(socket, users, "user" + userCounter++);
-   socketObject["color"] = "#232323";
+   let username = "user" + userCounter++;
+   if (latestUserConnection != null)
+   {
+      username = latestUserConnection;
+   }
+   socketObject["username"] = changeUsername(socket, users, username);
+   socketObject["color"] = "f0ffff";
    socketDictionary[socket.id] = socketObject;
    socket.on('chat message', (msg) =>
    {
@@ -32,21 +82,27 @@ io.on('connection', (socket) =>
          {
             socketDictionary[socket.id].color = msg.message.substring(7);
 
+            messageLog.forEach(function (value, index, array)
+            {
+               if (value.username == msg.username)
+               {
+                  array[index].color = socketDictionary[socket.id].color;
+               }
+            });
+
             io.emit('user color change', { username: msg.username, color: socketDictionary[socket.id].color });
          }
       }
       else
       {
          msg.timestamp = formattedDate(new Date());
+         msg.color = socketDictionary[socket.id].color;
 
          messageLog.push(msg);
          if (messageLog.length > 200)
          {
             messageLog.shift();
          }
-
-         console.log(messageLog[0].username);
-         console.log(messageLog.length);
 
          io.emit('chat message', msg);
       }

@@ -4,77 +4,10 @@
    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Dylan's chat app!</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font: 13px Helvetica, Arial;
-      }
-      #mainBody{
-         width: 100%;
-         display: flex;
-         flex-direction: row;
-         justify-content: center;
-      }
-      form {
-        background: #000;
-        padding: 3px;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        margin-top:100%;
-      }
-      form input {
-        border: 0;
-        padding: 10px;
-        width: 90%;
-        margin-right: 0.5%;
-      }
-      form button {
-        width: 9%;
-        background: rgb(130, 224, 255);
-        border: none;
-        padding: 10px;
-      }
-      #messages {
-        list-style-type: none;
-        margin: 0;
-        bottom: 0;
-        left: 0;
-        padding: 0;
-        order: 1;
-        flex-grow: 2;
-        flex-basis: auto;
-      }
-      #messages li {
-        padding: 5px 10px;
-      }
-      #messages li:nth-child(odd) {
-        background: #eee;
-      }
-
-      .list-group{
-         max-height: 300px;
-         min-height: 300px;
-         margin-bottom: 10px;
-         overflow:auto;
-         -webkit-overflow-scrolling: touch;
-      }
-
-      #userList
-      {
-         padding: 10px;
-         order: 2;
-         flex-grow: 1;
-         flex-basis: auto;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="styles.css">
   </head>
   <body>
-   <div class="jumbotron page-header">
+   <div class="page-header">
       <h1 class="display-3" id="header">
          Welcome <text id="username"></text>!
       </h1>
@@ -83,84 +16,25 @@
 
    </div>
    <div id="mainBody">
-      <ul id="messages" class="list-group" data-spy="scroll"></ul>
+      <div class="message-chat">
+         <div class="scrollableArea">
+            <ul id="messages" class="chat"></ul>
+         </div>
+      </div>
       <div id="userList">
-         Currently Active Users:
+         Online Users:
          <ul id="activeUserList">
 
          </ul>
       </div>
    </div>
-   <form action="">
+   <form id="submitForm" action="">
       <input id="m" autocomplete="off" /><button>Send</button>
    </form>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script>
-      const emojiMap = {
-      joy: "&#x1f602",
-      shades: "&#x1f60e",
-      happy: "&#x1f600"
-      }
-      const regExpression = /:([^:]*):/g
-      const emojiIt = (re, text) => {
-         while (result = re.exec(text)) {
-            text = text.replace(result[0], emojiMap[result[1]])
-         }
-         return text
-      }
-
-      $(function () {
-        var socket = io();
-        let username = "";
-        let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        $('form').submit(function(e){
-          e.preventDefault(); // prevents page reloading
-          socket.emit('chat message', {'message': $('#m').val(), 'username': username});
-          $('#m').val('');
-          return false;
-        });
-        socket.on('chat message', function(msg){
-           let convertedMessageText = emojiIt(regExpression, msg.message);
-           console.log(convertedMessageText);
-           let messageText = "<li data-user='" + msg.username + "' class='list-group-item list-group-item-dark'>" + msg.timestamp + " <b>" + msg.username + "</b>: " + convertedMessageText + "</li>";
-           if(msg.username == username)
-           {
-               messageText = "<li data-user='" + msg.username + "' class='list-group-item list-group-item-info'>" + msg.timestamp + " <b>" + msg.username + ": " + convertedMessageText + "</b></li>";
-           }
-          $('#messages').append("<div class='form-group'>" + messageText + "</div>");
-          $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        });
-        socket.on('server message', function(msg){
-           $('#messages').append("<div class='form-group'><li class='list-group-item list-group-item-primary'><i>" + msg.message + "</i></li></div>");
-        });
-        socket.on('server command', function(msg) {
-           if(msg == "clear")
-           {
-              $('#messages').empty();
-           }
-        })
-        socket.on('username', function(msg) {
-           username = msg.username;
-           $('#username').text(msg.username);
-        });
-        socket.on('active user list', function(msg) {
-           $('#activeUserList').empty();
-           msg.users.forEach(function(value){
-              $('#activeUserList').append("<li>" + value + "</li>");
-           });
-        });
-        socket.on('user color change', function(msg) {
-           $('#messages li').each(function(i){
-              if($(this).data('user') == msg.username)
-              {
-                 $(this).css('color', "#" + msg.color);
-              }
-           })
-        });
-      });
-    </script>
+    <script src="script.js"></script> 
   </body>
 </html>
