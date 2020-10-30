@@ -27,9 +27,7 @@ $(function ()
    });
    socket.on('chat message', function (msg)
    {
-      console.log("Message: " + JSON.stringify(msg));
       let convertedMessageText = emojiIt(regExpression, msg.message);
-      console.log(convertedMessageText);
       let messageText = "<li data-user='" + msg.username + "' class='user-messages' style='color:#" + msg.color + "'>" + msg.timestamp + " <b>" + msg.username + "</b>: " + convertedMessageText + "</li>";
       if (msg.username == username)
       {
@@ -53,9 +51,7 @@ $(function ()
    {
       username = msg.username;
       $('#username').text(msg.username);
-      console.log("Changing username");
       getCookieAsync(username);
-      console.log("Changed username");
    });
    socket.on('active user list', function (msg)
    {
@@ -73,7 +69,6 @@ $(function ()
    {
       $('#messages li').each(function (i)
       {
-         console.log("color changing!!!");
          if ($(this).data('user') == msg.username)
          {
             $(this).css('color', "#" + msg.color);

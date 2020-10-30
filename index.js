@@ -43,7 +43,7 @@ app.post('/user', (req, res, next) =>
       return;
    }
    res.clearCookie('user');
-   // res.cookie('user', req.body.user, { maxAge: 60 * 60 * 1000 });
+   res.cookie('user', req.body.user, { expires: new Date(Date.now() + 900000), httpOnly: true });
 
    next();
 
@@ -121,7 +121,6 @@ io.on('connection', (socket) =>
 
 http.listen(3000, () =>
 {
-   console.log('listening on *:3000');
 });
 
 function changeUsername(socket, users, username, prevUsername = "n/a")
@@ -167,9 +166,7 @@ function sendPreviousMessages(socket, messageLog)
 
 function sendUserList(io, users)
 {
-   console.log("Sending User list:");
    let message = { 'users': users.userList };
-   console.log(message);
    io.emit('active user list', message);
 }
 
