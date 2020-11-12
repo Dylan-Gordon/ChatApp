@@ -1,16 +1,14 @@
-const emojiMap = {
-   joy: "&#x1f602",
-   shades: "&#x1f60e",
-   happy: "&#x1f600",
-}
-const regExpression = /:([^:]*):/g;
-const emojiIt = (re, text) =>
+const emojiMap = [
+   { text: ":(", unicode: "🙁" },
+   { text: ":o", unicode: "😲" },
+   { text: ":)", unicode: "😁" },
+];
+const convertAllEmojis = (text) =>
 {
-   while (result = re.exec(text))
-   {
-      text = text.replace(result[0], emojiMap[result[1]]);
-   }
-   return text
+   let convertedText = text;
+   emojiMap.forEach(value => convertedText = convertedText.split(value.text).join(value.unicode));
+
+   return convertedText;
 }
 
 $(function ()
@@ -27,7 +25,7 @@ $(function ()
    });
    socket.on('chat message', function (msg)
    {
-      let convertedMessageText = emojiIt(regExpression, msg.message);
+      let convertedMessageText = convertAllEmojis(msg.message);
       let messageText = "<li data-user='" + msg.username + "' class='user-messages' style='color:#" + msg.color + "'>" + msg.timestamp + " <b>" + msg.username + "</b>: " + convertedMessageText + "</li>";
       if (msg.username == username)
       {
